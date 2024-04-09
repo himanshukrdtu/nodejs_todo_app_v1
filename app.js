@@ -12,7 +12,7 @@ config({
   path: "./data/config.env",
 });
 
-// Using Middlewares
+// Using Middlewares 
 app.use(express.json());
 app.use(cookieParser());
 app.use(

@@ -22,23 +22,29 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
     let user = await User.findOne({ email });
 
-    if (user) return next(new ErrorHandler("User Already Exist", 400));
+    if (user) {
+      // User already exists, send error response
+      return res.status(400).json({ message: "User Already Exists" });
+    }
 
+    // User does not exist, proceed with registration
     const hashedPassword = await bcrypt.hash(password, 10);
-
     user = await User.create({ name, email, password: hashedPassword });
 
-    sendCookie(user, res, "Registered Successfully", 201);
+    // Send success response
+    res.status(201).json({ message: "Registered Successfully", user });
   } catch (error) {
+    // Pass the error to the error handling middleware
     next(error);
   }
 };
+
 
 export const getMyProfile = (req, res) => {
   res.status(200).json({
